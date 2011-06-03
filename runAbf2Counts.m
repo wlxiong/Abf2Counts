@@ -1,0 +1,6 @@
+function [responseTimes, actionTimes, stimulusTimes] = runAbf2Counts(abfFilename)
+
+[stimulusWave, probeWave,actionWave, timeunit, meta] = ...
+    readAbfWave(abfFilename);
+[responseTimes, actionTimes, stimulusTimes] = ...
+    calcReponseTime(stimulusWave, probeWave,actionWave);
