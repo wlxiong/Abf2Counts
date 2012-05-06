@@ -25,7 +25,7 @@ responseTimes = responseTimes(nonzero);
 actionTimes = actionTimes(nonzero);
 stimulusTimes = stimulusTimes(nonzero);
 if sum(nonzero) <= 0.8*length(stimulusPulses)
-    warning(' Please check the data manually, because the following issue: ')
-    warning(' No. responses %d / No. stimuluses %d < 0.8', sum(nonzero), length(stimulusPulses))
+    warning(' Low detection rate found. Check data manually.\n No. responses %d / No. stimuluses %d < 0.8', ...
+        sum(nonzero), length(stimulusPulses))
     manyzero = 1;
 end

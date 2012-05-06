@@ -7,7 +7,7 @@ numStimulus = length(stimulusPulses.head);
 responseTimes = zeros(numStimulus, 1);
 stimulusTimes = zeros(numStimulus, 1);
 actionTimes   = zeros(numStimulus, 1);
-if isempty(probePulses) || isempty(actionPulses)
+if isempty(probePulses.tail) || isempty(actionPulses.head)
     return
 end
 % test each stimulus
