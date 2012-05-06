@@ -1,11 +1,11 @@
 function [timelist, chckfile, abflist] = batchRun(apath)
 % batch run abf2Counts
 apath = fileparts(apath);
-abfpath = [apath '/**/*.abf'];
+abfpath = fullfile(apath, '**/', '*.abf');
 abflist = rdir(abfpath);
 timelist = cell(length(abflist),1);
 chckfile = zeros(length(abflist),1);
-diary([apath '/abf2counts.log'])
+diary(fullfile(apath, 'abf2counts.log'))
 diary on
 for p = 1:length(abflist)
     fprintf('\n *** %d/%d *** \n', p, length(abflist))
