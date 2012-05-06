@@ -1,4 +1,4 @@
-function [timelist, chckfile, abflist] = batchRun(apath)
+function [timelist, chckfile, abflist] = batchRun(apath, replace)
 % batch run abf2Counts
 apath = fileparts(apath);
 abfpath = fullfile(apath, '**/', '*.abf');
@@ -9,6 +9,13 @@ diary(fullfile(apath, 'abf2counts.log'))
 diary on
 for p = 1:length(abflist)
     fprintf('\n *** %d/%d *** \n', p, length(abflist))
+    % check if the results already exist
+	[pathstr, name, ext] = fileparts(abflist(p).name);
+	matfilename = fullfile(pathstr, [name, '.mat']);
+	csvfilename = fullfile(pathstr, [name, '.csv']);
+    if ~replace && ~(exist(matfilename, 'file') && exist(csvfilename, 'file'))
+        continue
+    end
 	% import data
 	fprintf('\n [Importing]: %s\n\n', abflist(p).name)
 	[waves,timeunit,meta] = abfload2(abflist(p).name);
@@ -18,9 +25,6 @@ for p = 1:length(abflist)
 	timelist{p} = responseTimes;
     chckfile(p) = manyzero;
 	% export results
-	[pathstr, name, ext] = fileparts(abflist(p).name);
-	matfilename = fullfile(pathstr, [name, '.mat']);
-	csvfilename = fullfile(pathstr, [name, '.csv']);
 	save(matfilename, 'responseTimes', 'stimulusTimes', 'actionTimes', 'fWaves');
 	csvwrite(csvfilename, [responseTimes, stimulusTimes, actionTimes]);
 	% display summary

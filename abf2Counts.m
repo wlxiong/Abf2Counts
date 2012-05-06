@@ -24,8 +24,8 @@ nonzero = responseTimes~=0;
 responseTimes = responseTimes(nonzero);
 actionTimes = actionTimes(nonzero);
 stimulusTimes = stimulusTimes(nonzero);
-if sum(nonzero) < 0.8*length(stimulusPulses)
+if sum(nonzero) <= 0.8*length(stimulusPulses)
     warning(' Please check the data manually, because the following issue: ')
-    warning(' Total responses %d / Total stimuluses < 0.8', sum(nonzero), length(stimulusPulses))
+    warning(' No. responses %d / No. stimuluses %d < 0.8', sum(nonzero), length(stimulusPulses))
     manyzero = 1;
 end
