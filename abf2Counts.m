@@ -1,4 +1,4 @@
-function [responseTimes, stimulusTimes, actionTimes, meanTime, timeunit, meta] = abf2Counts(abfFilename)
+function [responseTimes, stimulusTimes, actionTimes, waves, timeunit, meta] = abf2Counts(abfFilename)
 
 % import data
 [waves,timeunit,meta] = abfload2(abfFilename);
@@ -22,10 +22,9 @@ nonzero = responseTimes~=0;
 responseTimes = responseTimes(nonzero);
 actionTimes = actionTimes(nonzero);
 stimulusTimes = stimulusTimes(nonzero);
-meanTime = mean(responseTimes(responseTimes~=0));
 % visualize the results
-figure; hold on
-plot(fWaves)
-legend('15','10','9')
-plot(stimulusTimes, ones(length(stimulusTimes),1),'*k')
-plot(actionTimes, ones(length(actionTimes),1),'ok')
+% figure; hold on
+% plot(fWaves)
+% legend('15','10','9')
+% plot(stimulusTimes, ones(length(stimulusTimes),1),'*k')
+% plot(actionTimes, ones(length(actionTimes),1),'ok')
