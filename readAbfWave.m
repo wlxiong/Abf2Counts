@@ -1,8 +1,9 @@
-function [stimulusWave,probeWave, actionWave, timeunit,meta] = readAbfWave(filename)
+function [stimulusWave,probeWave,actionWave,waves,timeunit,meta] = readAbfWave(filename)
 % read the abf file
 [waves,timeunit,meta] = abfload2(filename);
 % get channel name
 channelNames = meta.recChNames;
+disp(channelNames)
 stimulusChannel = 3;
 probeChannel = 2;
 actionChannel = 1;

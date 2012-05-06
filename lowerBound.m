@@ -28,9 +28,9 @@ end
 if haystack(lo) == needle
     ind = lo;
 elseif lo < hayleng
-    ind = -lo;
+    ind = lo;
 elseif haystack(lo) < needle
-    ind = -lo - 1;
+    ind = lo + 1;
 else
-    ind = -lo;
+    ind = lo;
 end
