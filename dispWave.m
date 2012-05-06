@@ -5,6 +5,6 @@ load(matfilename)
 % plot the waves
 figure; hold on
 plot(fWaves)
-legend('15','10','9')
+legend('IN 15', 'IN 10', 'IN 9')
 plot(stimulusTimes, ones(length(stimulusTimes),1),'*k')
 plot(actionTimes, ones(length(actionTimes),1),'ok')

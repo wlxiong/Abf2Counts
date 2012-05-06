@@ -24,10 +24,12 @@ for p = 1:length(abflist)
         timelist{p} = responseTimes;
         chckfile(p) = manyzero;
         % export results
-        save(matfilename, 'responseTimes', 'stimulusTimes', 'actionTimes', 'fWaves');
+        save(matfilename, 'responseTimes', 'stimulusTimes', 'actionTimes', ...
+                          'fWaves', 'waves', 'timeunit', 'meta');
         csvwrite(csvfilename, [responseTimes, stimulusTimes, actionTimes]);
     else
         % if the results exist, load them
+        fprintf('\n [Found]: %s\n', matfilename)
         fprintf('\n Results already exist, skip computation.\n\n')
         load(matfilename, 'responseTimes')
     end
