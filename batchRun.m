@@ -4,7 +4,7 @@ apath = fileparts(apath);
 abfpath = [apath '/**/*.abf'];
 abflist = rdir(abfpath);
 timelist = cell(length(abflist),1);
-chckfile = zero(length(abflist),1);
+chckfile = zeros(length(abflist),1);
 diary([apath '/abf2counts.log'])
 diary on
 for p = 1:length(abflist)
@@ -29,7 +29,9 @@ for p = 1:length(abflist)
 	fprintf(' std. response time: %.2f ms\n',  std(responseTimes));
 end
 % the abf files needs manual check
-chcklist = abflist{logical(chckfile)};
-fprintf('\n\n\n Please check the following records manually: \n\n')
-cellfun(@disp, chcklist);
+chcklist = abflist(logical(chckfile));
+if ~isempty(chcklist)
+    fprintf('\n\n\n Please check the following records manually: \n\n')
+    cellfun(@disp, chcklist);
+end
 diary off
