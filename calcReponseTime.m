@@ -1,11 +1,7 @@
 function [responseTimes, actionTimes, stimulusTimes] = ...
-    calcReponseTime(stimulusWave,probeWave, actionWave)
+    calcReponseTime(stimulusPulses,probePulses, actionPulses)
 % calcReponseTime(waveFile, stimulusType)
 
-% extract pusles from each wave
-stimulusPulses = detPulseInterval(stimulusWave);
-probePulses    = detPulseInterval(probeWave);
-actionPulses   = detPulseInterval(actionWave);
 % calculate the response time
 numStimulus = length(stimulusPulses.head);
 responseTimes = zeros(numStimulus, 1);

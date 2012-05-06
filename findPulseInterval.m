@@ -1,4 +1,4 @@
-function [pulses, threshold] = detPulseInterval(wave)
+function [pulses, threshold] = findPulseInterval(wave)
 % [pulses, threshold] = detPulseInterval(wave)
 % add zeros in the first and last rows of wave
 wave = [0; wave(:);0];
