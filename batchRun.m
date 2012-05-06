@@ -1,5 +1,14 @@
 function [timelist, chckfile, abflist] = batchRun(apath, replace)
-% batch run abf2Counts
+% batch run of conversion from abf to response time
+% usage: 
+% [timelist, chckfile, abflist] = batchRun(filename_string, replace);
+% if replace = 1, overwrite the previous computed xls files
+% if replace = 0, preserve the previous computed xls files
+% examples: 
+% [timelist, chckfile, abflist] = batchRun('E:\lzl_light_sound_association\101204\', 1);
+% [timelist, chckfile, abflist] = batchRun('E:\lzl_light_sound_association\101204\', 0);
+% [timelist, chckfile, abflist] = batchRun('E:\lzl_light_sound_association\', 1);
+% 
 apath = fileparts(apath);
 abfpath = fullfile(apath, '**/', '*.abf');
 abflist = rdir(abfpath);
@@ -41,6 +50,7 @@ for p = 1:length(abflist)
         csvwrite(csvfilename, [responseTimes, stimulusTimes, actionTimes]);
     else
         % if the results exist, load them
+        fprintf('\n [Found]: %s\n', csvfilename)
         fprintf('\n [Found]: %s\n', matfilename)
         fprintf('\n Results already exist, skip computation.\n\n')
         load(matfilename, 'responseTimes')
