@@ -1,9 +1,12 @@
-function [timelist, abflist] = batchRun(apath)
+function [timelist, chckfile, abflist] = batchRun(apath)
 % batch run abf2Counts
 apath = fileparts(apath);
-abfpath = [apath '/*.abf'];
+abfpath = [apath '/**/*.abf'];
 abflist = rdir(abfpath);
 timelist = cell(length(abflist),1);
+chckfile = zero(length(abflist),1);
+diary([apath '/abf2counts.log'])
+diary on
 for p = 1:length(abflist)
     fprintf('\n *** %d/%d *** \n', p, length(abflist))
 	% import data
@@ -11,8 +14,9 @@ for p = 1:length(abflist)
 	[waves,timeunit,meta] = abfload2(abflist(p).name);
 	% process data
 	fprintf('\n [Processing]: %s\n\n', abflist(p).name)
-	[responseTimes, stimulusTimes, actionTimes, fWaves] = abf2Counts(waves,meta);
+	[responseTimes, stimulusTimes, actionTimes, fWaves, manyzero] = abf2Counts(waves,meta);
 	timelist{p} = responseTimes;
+    chckfile(p) = manyzero;
 	% export results
 	[pathstr, name, ext] = fileparts(abflist(p).name);
 	matfilename = fullfile(pathstr, [name, '.mat']);
@@ -24,3 +28,8 @@ for p = 1:length(abflist)
 	fprintf(' mean response time: %.2f ms\n', mean(responseTimes));
 	fprintf(' std. response time: %.2f ms\n',  std(responseTimes));
 end
+% the abf files needs manual check
+chcklist = abflist{logical(chckfile)};
+fprintf('\n\n\n Please check the following records manually: \n\n')
+cellfun(@disp, chcklist);
+diary off

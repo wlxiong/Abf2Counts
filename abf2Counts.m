@@ -1,4 +1,4 @@
-function [responseTimes, stimulusTimes, actionTimes, fWaves] = abf2Counts(waves, meta)
+function [responseTimes, stimulusTimes, actionTimes, fWaves, manyzero] = abf2Counts(waves, meta)
 % convert abf waves to counts
 % get the absolute values of the waves
 waves = abs(waves);
@@ -19,13 +19,13 @@ stimulusPulses = findPulseInterval(stimulusWave);
 [responseTimes, actionTimes, stimulusTimes] = ...
     calcReponseTime(stimulusPulses,probePulses,actionPulses);
 % get the nonzero results
+manyzero = 0;
 nonzero = responseTimes~=0;
 responseTimes = responseTimes(nonzero);
 actionTimes = actionTimes(nonzero);
 stimulusTimes = stimulusTimes(nonzero);
-% visualize the results
-% figure; hold on
-% plot(fWaves)
-% legend('15','10','9')
-% plot(stimulusTimes, ones(length(stimulusTimes),1),'*k')
-% plot(actionTimes, ones(length(actionTimes),1),'ok')
+if sum(nonzero) < 0.8*length(stimulusPulses)
+    warning(' Please check the data manually, because the following issue: ')
+    warning(' Total responses %d / Total stimuluses < 0.8', sum(nonzero), length(stimulusPulses))
+    manyzero = 1;
+end
