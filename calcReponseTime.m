@@ -11,7 +11,8 @@ actionTimes   = zeros(numStimulus, 1);
 for stimuInd = 1:numStimulus
     probeInd  = lowerBound(probePulses.tail, stimulusPulses.head(stimuInd));
     actionInd = lowerBound(actionPulses.head, stimulusPulses.head(stimuInd));
-    if stimulusPulses.head(stimuInd) < probePulses.head( probeInd ) || ...
+    if probeInd > length((probePulses.head)) || actionInd > length(actionPulses.head) || ...
+	   stimulusPulses.head(stimuInd) < probePulses.head( probeInd ) || ...
        stimuInd < numStimulus && stimulusPulses.head(stimuInd+1) < actionPulses.head( actionInd )
         continue
     end

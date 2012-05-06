@@ -5,9 +5,9 @@ wave = [0; wave(:);0];
 % find the bin with the maximum frequency
 nbin = floor(sqrt(length(wave)));
 [bins xout] = hist(wave, nbin);
-[mvalue mindex] = max(bins);
+[mvalue mindex] = max(bins(1:int32(nbin/2)));
 % calculate the threshold of low volt value
-threshold = abs(xout(mindex+floor(sqrt(nbin))));
+threshold = abs(xout(mindex+floor(sqrt(nbin/2))));
 %% detect the pulses for each wave
 wave( abs(wave) >  threshold  ) = max(wave);
 wave( abs(wave) <= threshold  ) = 0.0;
