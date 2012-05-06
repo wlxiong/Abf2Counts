@@ -15,17 +15,29 @@ for p = 1:length(abflist)
 	csvfilename = fullfile(pathstr, [name, '.csv']);
     % check if the results already exist
     if replace || ~exist(matfilename, 'file') || ~exist(csvfilename, 'file')
+        % extract channel 9, 10 and 15
+        [waves0,timeunit0,meta0] = abfload2(abflist(p).name, 'info');
+        actionChInd   = find(cellfun(@length, strfind(meta0.recChNames, '9')));
+        probeChInd    = find(cellfun(@length, strfind(meta0.recChNames, '10')));
+        stimulusChInd = find(cellfun(@length, strfind(meta0.recChNames, '15')));
+        % if any channel cannot found, go to next file
+        if isempty(actionChInd) || isempty(probeChInd) || isempty(stimulusChInd)
+            warning(' Not enough input channels.')
+            continue
+        end
         % import data
         fprintf('\n [Importing]: %s\n\n', abflist(p).name)
         [waves,timeunit,meta] = abfload2(abflist(p).name);
         % process data
         fprintf('\n [Processing]: %s\n\n', abflist(p).name)
-        [responseTimes, stimulusTimes, actionTimes, fWaves, manyzero] = abf2Counts(waves,meta);
+        sortedwaves = [waves(:,actionChInd), waves(:,probeChInd), waves(:,stimulusChInd)];
+        [responseTimes, stimulusTimes, actionTimes, abswaves, manyzero] = abf2Counts(sortedwaves);
         timelist{p} = responseTimes;
         chckfile(p) = manyzero;
         % export results
         save(matfilename, 'responseTimes', 'stimulusTimes', 'actionTimes', ...
-                          'fWaves', 'waves', 'timeunit', 'meta');
+                          'actionChInd', 'probeChInd', 'stimulusChInd', ...
+                          'abswaves', 'waves', 'timeunit', 'meta');
         csvwrite(csvfilename, [responseTimes, stimulusTimes, actionTimes]);
     else
         % if the results exist, load them

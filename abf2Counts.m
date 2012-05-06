@@ -1,16 +1,13 @@
-function [responseTimes, stimulusTimes, actionTimes, fWaves, manyzero] = abf2Counts(waves, meta)
+function [responseTimes, stimulusTimes, actionTimes, abswaves, manyzero] = abf2Counts(waves)
 % convert abf waves to counts
 % get the absolute values of the waves
 waves = abs(waves);
 % calculate the average values of each 10 points
 n = 10;
-actionChInd   = find(cellfun(@length, strfind(meta.recChNames, '9')));
-probeChInd    = find(cellfun(@length, strfind(meta.recChNames, '10')));
-stimulusChInd = find(cellfun(@length, strfind(meta.recChNames, '15')));
-actionWave   = filterWave(waves(:,actionChInd), n);
-probeWave    = filterWave(waves(:,probeChInd), n);
-stimulusWave = filterWave(waves(:,stimulusChInd), n);
-fWaves = [stimulusWave,probeWave,actionWave];
+actionWave   = filterWave(waves(:,1), n);
+probeWave    = filterWave(waves(:,2), n);
+stimulusWave = filterWave(waves(:,3), n);
+abswaves = [stimulusWave,probeWave,actionWave];
 % extract pusles from each wave
 actionPulses   = findPulseInterval(actionWave);
 probePulses    = findPulseInterval(probeWave);
