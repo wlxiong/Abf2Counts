@@ -7,6 +7,9 @@ numStimulus = length(stimulusPulses.head);
 responseTimes = zeros(numStimulus, 1);
 stimulusTimes = zeros(numStimulus, 1);
 actionTimes   = zeros(numStimulus, 1);
+if isempty(probePulses) || isempty(actionPulses)
+    return
+end
 % test each stimulus
 for stimuInd = 1:numStimulus
     probeInd  = lowerBound(probePulses.tail, stimulusPulses.head(stimuInd));
