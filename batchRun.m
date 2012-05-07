@@ -1,4 +1,4 @@
-function [timelist, chckfile, abflist] = batchRun(apath, replace)
+function [timelist, chcklist, abflist] = batchRun(apath, replace)
 % batch run of conversion from abf to response time
 % usage: 
 % [timelist, chckfile, abflist] = batchRun(filename_string, replace);
@@ -60,10 +60,11 @@ for p = 1:length(abflist)
 	fprintf(' mean response time: %.2f ms\n', mean(responseTimes));
 	fprintf(' std. response time: %.2f ms\n',  std(responseTimes));
 end
+fprintf('\n *** The computation is finished. ***\n\n');
 % the abf files needs manual check
 chcklist = abflist(logical(chckfile));
 if ~isempty(chcklist)
-    fprintf('\n\n\n Please check the following records manually: \n\n')
-    cellfun(@disp, chcklist);
+    fprintf('\n Please check the following files manually: \n\n')
+    fprintf(' %s\n', chcklist.name);
 end
 diary off
