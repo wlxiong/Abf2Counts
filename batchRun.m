@@ -29,9 +29,6 @@ for p = 1:length(abflist)
     if replace || ~exist(matfilename, 'file') || ~exist(csvfilename, 'file')
         % extract channel 9, 10 and 15
         [waves0,timeunit0,meta0] = abfload2(abflist(p).name, 'info');
-        if sum(cellfun(@length, strfind(meta0.recChNames, '11')))
-            continue
-        end
         actionChInd   = find(cellfun(@length, strfind(meta0.recChNames, '9')));
         probeChInd    = find(cellfun(@length, strfind(meta0.recChNames, '10')));
         stimulusChInd = find(cellfun(@length, strfind(meta0.recChNames, '15')));
