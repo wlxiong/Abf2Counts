@@ -9,12 +9,16 @@ function [abflist, chcklist] = batchRun(apath, replace)
 % [abflist, chcklist] = batchRun('E:\lzl_light_sound_association\101204\', 0);
 % [abflist, chcklist] = batchRun('E:\lzl_light_sound_association\', 1);
 % 
-apath = fileparts(apath);
-abfpath = fullfile(apath, '**/', '*.abf');
-abflist = rdir(abfpath);
-chckfile = zeros(length(abflist),1);
-diary(fullfile(apath, 'abf2counts.log'))
+[pathstr, name, ext] = fileparts(apath);
+diary(fullfile(pathstr, 'abf2counts.log'))
 diary on
+if strcmp(ext, '.abf')
+    abflist = struct('name', apath);
+else
+    abfpath = fullfile(pathstr, '**/', '*.abf');
+    abflist = rdir(abfpath);
+end
+chckfile = zeros(length(abflist),1);
 for p = 1:length(abflist)
     fprintf('\n *** %d/%d *** \n', p, length(abflist))
     % create the output filenames
@@ -25,6 +29,9 @@ for p = 1:length(abflist)
     if replace || ~exist(matfilename, 'file') || ~exist(csvfilename, 'file')
         % extract channel 9, 10 and 15
         [waves0,timeunit0,meta0] = abfload2(abflist(p).name, 'info');
+        if sum(cellfun(@length, strfind(meta0.recChNames, '11')))
+            continue
+        end
         actionChInd   = find(cellfun(@length, strfind(meta0.recChNames, '9')));
         probeChInd    = find(cellfun(@length, strfind(meta0.recChNames, '10')));
         stimulusChInd = find(cellfun(@length, strfind(meta0.recChNames, '15')));
