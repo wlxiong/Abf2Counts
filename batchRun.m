@@ -1,18 +1,17 @@
-function [timelist, chcklist, abflist] = batchRun(apath, replace)
+function [abflist, chcklist] = batchRun(apath, replace)
 % batch run of conversion from abf to response time
 % usage: 
-% [timelist, chckfile, abflist] = batchRun(filename_string, replace);
+% [abflist, chcklist] = batchRun(filename_string, replace);
 % if replace = 1, overwrite the previous computed xls files
 % if replace = 0, preserve the previous computed xls files
 % examples: 
-% [timelist, chckfile, abflist] = batchRun('E:\lzl_light_sound_association\101204\', 1);
-% [timelist, chckfile, abflist] = batchRun('E:\lzl_light_sound_association\101204\', 0);
-% [timelist, chckfile, abflist] = batchRun('E:\lzl_light_sound_association\', 1);
+% [abflist, chcklist] = batchRun('E:\lzl_light_sound_association\101204\', 1);
+% [abflist, chcklist] = batchRun('E:\lzl_light_sound_association\101204\', 0);
+% [abflist, chcklist] = batchRun('E:\lzl_light_sound_association\', 1);
 % 
 apath = fileparts(apath);
 abfpath = fullfile(apath, '**/', '*.abf');
 abflist = rdir(abfpath);
-timelist = cell(length(abflist),1);
 chckfile = zeros(length(abflist),1);
 diary(fullfile(apath, 'abf2counts.log'))
 diary on
@@ -40,14 +39,13 @@ for p = 1:length(abflist)
         % process data
         fprintf('\n [Processing]: %s\n\n', abflist(p).name)
         sortedwaves = [waves(:,actionChInd), waves(:,probeChInd), waves(:,stimulusChInd)];
-        [responseTimes, stimulusTimes, actionTimes, abswaves, manyzero] = abf2Counts(sortedwaves);
-        timelist{p} = responseTimes;
-        chckfile(p) = manyzero;
+        [probes, responses, mismatch, invalidate, abswaves] = abf2Counts(sortedwaves);
+        chckfile(p) = invalidate;
         % export results
-        save(matfilename, 'responseTimes', 'stimulusTimes', 'actionTimes', ...
+        save(matfilename, 'probes', 'responses', 'mismatch', 'invalidate', ...
                           'actionChInd', 'probeChInd', 'stimulusChInd', ...
-                          'abswaves', 'waves', 'timeunit', 'meta');
-        csvwrite(csvfilename, [responseTimes, stimulusTimes, actionTimes]);
+                          'abswaves', 'timeunit', 'meta');
+        csvwrite(csvfilename, [probes.time, responses.time, mismatch]);
     else
         % if the results exist, load them
         fprintf('\n [Found]: %s\n', csvfilename)
@@ -56,9 +54,12 @@ for p = 1:length(abflist)
         load(matfilename, 'responseTimes')
     end
 	% display summary
-	fprintf(' no. of response: %d\n', length(responseTimes));
-	fprintf(' mean response time: %.2f ms\n', mean(responseTimes));
-	fprintf(' std. response time: %.2f ms\n',  std(responseTimes));
+	fprintf(' no. of waiting: %d\n', length(probes.time));
+	fprintf(' mean waiting time: %.2f ms\n', mean(probes.time));
+	fprintf(' std. waiting time: %.2f ms\n',  std(probes.time));
+	fprintf(' no. of response: %d\n', length(responses.time(mismatch==0)));
+	fprintf(' mean response time: %.2f ms\n', mean(responses.time(mismatch==0)));
+	fprintf(' std. response time: %.2f ms\n',  std(responses.time(mismatch==0)));
 end
 fprintf('\n *** The computation is finished. ***\n\n');
 % the abf files needs manual check
