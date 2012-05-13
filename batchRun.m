@@ -19,6 +19,14 @@ else
     abflist = rdir(abfpath);
 end
 chckfile = zeros(length(abflist),1);
+% create the big table
+tabfilename = fullfile(pathstr, 'abf2counts.csv');
+% write the table headings
+ftab = fopen(tabfilename, 'w');
+fprintf(ftab, 'file,waiting,moving,type\n');
+fclose(ftab);
+% append to the big table
+ftab = fopen(tabfilename, 'a');
 for p = 1:length(abflist)
     fprintf('\n *** %d/%d *** \n', p, length(abflist))
     % create the output filenames
@@ -50,6 +58,8 @@ for p = 1:length(abflist)
                           'actionChInd', 'probeChInd', 'stimulusChInd', ...
                           'abswaves', 'timeunit', 'meta');
         csvwrite(csvfilename, [probes.time, responses.time, mismatch]);
+        fprintf(ftab, '%s,,,\n', name);
+        fprintf(ftab, ',%d,%d,%d\n', probes.time, responses.time, mismatch);
     else
         % if the results exist, load them
         fprintf('\n [Found]: %s\n', csvfilename)
@@ -65,6 +75,7 @@ for p = 1:length(abflist)
 	fprintf(' mean response time: %.2f ms\n', mean(responses.time(mismatch==0)));
 	fprintf(' std. response time: %.2f ms\n',  std(responses.time(mismatch==0)));
 end
+fclose(ftab)
 fprintf('\n *** The computation is finished. ***\n\n');
 % the abf files needs manual check
 chcklist = abflist(logical(chckfile));
