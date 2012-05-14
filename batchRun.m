@@ -1,13 +1,13 @@
-function [abflist, chcklist] = batchRun(apath, replace)
+function [abflist, chklist] = batchRun(apath, replace)
 % batch run of conversion from abf to response time
 % usage: 
-% [abflist, chcklist] = batchRun(filename_string, replace);
+% [abflist, chklist] = batchRun(filename_string, replace);
 % if replace = 1, overwrite the previous computed xls files
 % if replace = 0, preserve the previous computed xls files
 % examples: 
-% [abflist, chcklist] = batchRun('E:\lzl_light_sound_association\101204\', 1);
-% [abflist, chcklist] = batchRun('E:\lzl_light_sound_association\101204\', 0);
-% [abflist, chcklist] = batchRun('E:\lzl_light_sound_association\', 1);
+% [abflist, chklist] = batchRun('E:\lzl_light_sound_association\101204\', 1);
+% [abflist, chklist] = batchRun('E:\lzl_light_sound_association\101204\', 0);
+% [abflist, chklist] = batchRun('E:\lzl_light_sound_association\', 1);
 % 
 [pathstr, name, ext] = fileparts(apath);
 diary(fullfile(pathstr, 'abf2counts.log'))
@@ -18,7 +18,7 @@ else
     abfpath = fullfile(pathstr, '**/', '*.abf');
     abflist = rdir(abfpath);
 end
-chckfile = zeros(length(abflist),1);
+chkfile = zeros(length(abflist),1);
 % create the big table
 tabfilename = fullfile(pathstr, 'abf2counts.csv');
 % write the table headings
@@ -50,13 +50,30 @@ for p = 1:length(abflist)
         [waves,timeunit,meta] = abfload2(abflist(p).name);
         % process data
         fprintf('\n [Processing]: %s\n\n', abflist(p).name)
-        [probes, responses, mismatch, invalidate, smoothwaves, avgwaves] = ... 
-            abf2Counts([waves(:,actionChInd), waves(:,probeChInd), waves(:,stimulusChInd)], timeunit);
-        chckfile(p) = invalidate;
+        % calculate the moving-average values
+        avgspan = floor(1000.0/timeunit);
+        [actionWave, avgActionWave]     = smoothWave(waves(:,actionChInd), avgspan);
+        [probeWave, avgProbeWave]       = smoothWave(waves(:,probeChInd), avgspan);
+        [stimulusWave, avgStimulusWave] = smoothWave(waves(:,stimulusChInd), avgspan);
+        smoothwaves = [stimulusWave,probeWave,actionWave];
+        avgwaves    = [avgStimulusWave,avgProbeWave,avgActionWave];
         % reduce memory use
         clear waves
+        % extract pusles from each wave
+        [actionPulses, lowa]   = findPulseInterval(actionWave);
+        [probePulses, lowp]    = findPulseInterval(probeWave);
+        [stimulusPulses, lows] = findPulseInterval(stimulusWave);
+        % calculate response times
+        [probes, responses, mismatch] = calcReponseTime(stimulusPulses,probePulses,actionPulses);
+        % warn the invalidate results
+        chkfile(p) = 0;
+        if sum(mismatch==0) <= 0.5*length(probePulses.head)
+            warning(' Low detection rate found. Check data manually.\n No. responses %d / No. probes %d < 0.5', ...
+                sum(mismatch==0), length(probePulses.head))
+            chkfile(p) = 1;
+        end
         % export results
-        save(matfilename, 'probes', 'responses', 'mismatch', 'invalidate', ...
+        save(matfilename, 'probes', 'responses', 'mismatch', ...
                           'actionChInd', 'probeChInd', 'stimulusChInd', ...
                           'avgwaves', 'timeunit', 'meta');
     else
@@ -80,9 +97,9 @@ end
 fclose(ftab);
 fprintf('\n *** The computation is finished. ***\n\n');
 % the abf files needs manual check
-chcklist = abflist(logical(chckfile));
-if ~isempty(chcklist)
+chklist = abflist(logical(chkfile));
+if ~isempty(chklist)
     fprintf('\n Please check the following files manually: \n\n')
-    fprintf(' %s\n', chcklist.name);
+    fprintf(' %s\n', chklist.name);
 end
 diary off
