@@ -44,3 +44,8 @@ for probeInd = 1:numProbe
 	responses.tail(probeInd) = actionPulses.head(actionInd);
     responses.head(probeInd) = stimulusPulses.head(stimuInd);
 end
+% warn low response rate
+if sum(mismatch==0) <= 0.5*length(probes.time)
+    warning(' No. responses %d / No. probes %d < 0.5', ...
+        sum(mismatch==0), length(probes.time))
+end

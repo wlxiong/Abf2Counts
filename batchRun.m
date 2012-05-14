@@ -61,13 +61,7 @@ for p = 1:length(abflist)
         [stimulusPulses, lows] = findPulseInterval(stimulusWave);
         % calculate response times
         [probes, responses, mismatch] = calcReponseTime(stimulusPulses,probePulses,actionPulses);
-        % warn low response rate
-        chkfile(p) = 0;
-        if sum(mismatch==0) <= 0.5*length(probePulses.head)
-            warning(' No. responses %d / No. probes %d < 0.5', ...
-                sum(mismatch==0), length(probePulses.head))
-            chkfile(p) = 1;
-        end
+        chkfile(p) = sum(mismatch==0) <= 0.5*length(probes.time);
         % export results
         avgwaves = [avgStimulusWave,avgProbeWave,avgActionWave];
         save(matfilename, 'probes', 'responses', 'mismatch', ...
