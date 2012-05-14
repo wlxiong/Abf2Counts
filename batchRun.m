@@ -55,24 +55,21 @@ for p = 1:length(abflist)
         [actionWave, avgActionWave]     = smoothWave(waves(:,actionChInd), avgspan);
         [probeWave, avgProbeWave]       = smoothWave(waves(:,probeChInd), avgspan);
         [stimulusWave, avgStimulusWave] = smoothWave(waves(:,stimulusChInd), avgspan);
-        smoothwaves = [stimulusWave,probeWave,actionWave];
-        avgwaves    = [avgStimulusWave,avgProbeWave,avgActionWave];
-        % reduce memory use
-        clear waves
         % extract pusles from each wave
         [actionPulses, lowa]   = findPulseInterval(actionWave);
         [probePulses, lowp]    = findPulseInterval(probeWave);
         [stimulusPulses, lows] = findPulseInterval(stimulusWave);
         % calculate response times
         [probes, responses, mismatch] = calcReponseTime(stimulusPulses,probePulses,actionPulses);
-        % warn the invalidate results
+        % warn low response rate
         chkfile(p) = 0;
         if sum(mismatch==0) <= 0.5*length(probePulses.head)
-            warning(' Low detection rate found. Check data manually.\n No. responses %d / No. probes %d < 0.5', ...
+            warning(' No. responses %d / No. probes %d < 0.5', ...
                 sum(mismatch==0), length(probePulses.head))
             chkfile(p) = 1;
         end
         % export results
+        avgwaves = [avgStimulusWave,avgProbeWave,avgActionWave];
         save(matfilename, 'probes', 'responses', 'mismatch', ...
                           'actionChInd', 'probeChInd', 'stimulusChInd', ...
                           'avgwaves', 'timeunit', 'meta');
