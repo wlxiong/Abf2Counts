@@ -2,11 +2,8 @@ function [pulses, threshold] = findPulseInterval(wave)
 % [pulses, threshold] = findPulseInterval(wave)
 % add zeros in the first and last rows of wave
 wave = [0; wave(:);0];
-% find the bin with the maximum frequency
-nbin = max([floor(max(wave)/0.1), 2]);
-[bins xout] = hist(wave, nbin);
 % calculate the threshold of low volt value
-threshold = max(xout)*.5+min(xout)*.5;
+threshold = max(wave)*.5+min(wave)*.5;
 % detect the pulses for each wave
 wave( abs(wave) >  threshold  ) = max(wave);
 wave( abs(wave) <= threshold  ) = 0.0;
