@@ -34,7 +34,7 @@ for p = 1:length(abflist)
 	matfilename = fullfile(pathstr, [name, '.mat']);
 	csvfilename = fullfile(pathstr, [name, '.csv']);
     % check if the results already exist
-    if replace || ~exist(matfilename, 'file') || ~exist(csvfilename, 'file')
+    if replace || ~exist(matfilename, 'file')
         % extract channel 9, 10 and 15
         [waves0,timeunit0,meta0] = abfload2(abflist(p).name, 'info');
         actionChInd   = find(cellfun(@length, strfind(meta0.recChNames, '9')));
@@ -57,16 +57,16 @@ for p = 1:length(abflist)
         save(matfilename, 'probes', 'responses', 'mismatch', 'invalidate', ...
                           'actionChInd', 'probeChInd', 'stimulusChInd', ...
                           'abswaves', 'timeunit', 'meta');
-        csvwrite(csvfilename, [probes.time, responses.time, mismatch]);
-        fprintf(ftab, '%s,,,\n', name);
-        fprintf(ftab, ',%d,%d,%d\n', probes.time, responses.time, mismatch);
     else
         % if the results exist, load them
-        fprintf('\n [Found]: %s\n', csvfilename)
         fprintf('\n [Found]: %s\n', matfilename)
         fprintf('\n Results already exist, skip computation.\n\n')
-        load(matfilename, 'responseTimes')
+        load(matfilename, 'probes', 'responses', 'mismatch')
     end
+    % print results
+    csvwrite(csvfilename, [probes.time, responses.time, mismatch]);
+    fprintf(ftab, '%s,,,\n', name);
+    fprintf(ftab, ',%d,%d,%d\n', [probes.time'; responses.time'; mismatch']);
 	% display summary
 	fprintf(' no. of waiting: %d\n', length(probes.time));
 	fprintf(' mean waiting time: %.2f ms\n', mean(probes.time));
@@ -75,7 +75,7 @@ for p = 1:length(abflist)
 	fprintf(' mean response time: %.2f ms\n', mean(responses.time(mismatch==0)));
 	fprintf(' std. response time: %.2f ms\n',  std(responses.time(mismatch==0)));
 end
-fclose(ftab)
+fclose(ftab);
 fprintf('\n *** The computation is finished. ***\n\n');
 % the abf files needs manual check
 chcklist = abflist(logical(chckfile));
