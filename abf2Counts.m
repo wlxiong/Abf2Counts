@@ -3,11 +3,12 @@ function [probes, responses, mismatch, invalidate, abswaves] = abf2Counts(waves)
 % get the absolute values of the waves
 waves = abs(waves);
 % calculate the moving-average values of each 10 points
-n = 10;
-actionWave   = smoothWave(waves(:,1), n);
-probeWave    = smoothWave(waves(:,2), n);
-stimulusWave = smoothWave(waves(:,3), n);
-abswaves = [stimulusWave,probeWave,actionWave];
+n = floor(1000/timeunit);
+[actionWave, avgActionWave]     = smoothWave(waves(:,1), n);
+[probeWave, avgProbeWave]       = smoothWave(waves(:,2), n);
+[stimulusWave, avgStimulusWave] = smoothWave(waves(:,3), n);
+smoothwaves = [stimulusWave,probeWave,actionWave];
+avgwaves = [avgStimulusWave,avgProbeWave,avgActionWave];
 % extract pusles from each wave
 [actionPulses, lowa]   = findPulseInterval(actionWave);
 [probePulses, lowp]    = findPulseInterval(probeWave);

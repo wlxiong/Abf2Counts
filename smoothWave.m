@@ -5,4 +5,4 @@ nlen = floor(len/n)*n;
 mwave = mean(reshape(wave(1:nlen),n,floor(len/n)));
 avgwave = mwave(:);
 % smooth the wave
-smwave = smooth(avgwave,50);
+smwave = smooth(avgwave,n*4);
