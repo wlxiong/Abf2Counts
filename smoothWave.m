@@ -1,4 +1,4 @@
-function smwave = smoothWave(wave, n)
+function [smwave, avgwave] = smoothWave(wave, n)
 % average values
 len = length(wave);
 nlen = floor(len/n)*n;

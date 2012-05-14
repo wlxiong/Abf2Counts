@@ -1,4 +1,4 @@
-function [probes, responses, mismatch, invalidate, abswaves] = abf2Counts(waves)
+function [probes, responses, mismatch, invalidate, smoothwaves, avgwaves] = abf2Counts(waves, timeunit)
 % convert abf waves to counts
 % get the absolute values of the waves
 waves = abs(waves);

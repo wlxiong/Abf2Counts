@@ -51,12 +51,12 @@ for p = 1:length(abflist)
         % process data
         fprintf('\n [Processing]: %s\n\n', abflist(p).name)
         sortedwaves = [waves(:,actionChInd), waves(:,probeChInd), waves(:,stimulusChInd)];
-        [probes, responses, mismatch, invalidate, abswaves] = abf2Counts(sortedwaves);
+        [probes, responses, mismatch, invalidate, smoothwaves, avgwaves] = abf2Counts(sortedwaves, timeunit);
         chckfile(p) = invalidate;
         % export results
         save(matfilename, 'probes', 'responses', 'mismatch', 'invalidate', ...
                           'actionChInd', 'probeChInd', 'stimulusChInd', ...
-                          'abswaves', 'timeunit', 'meta');
+                          'smoothwaves', 'avgwaves', 'timeunit', 'meta');
     else
         % if the results exist, load them
         fprintf('\n [Found]: %s\n', matfilename)

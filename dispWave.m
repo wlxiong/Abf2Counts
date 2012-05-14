@@ -4,7 +4,7 @@ function dispWave(matfilename)
 load(matfilename)
 % plot the waves
 figure; hold on
-plot(abswaves)
+plot(avgwaves)
 legend('IN 15', 'IN 10', 'IN 9')
 plot(responses.head, ones(length(responses.head),1)*.8,'*k')
 plot(responses.tail, ones(length(responses.tail),1)*.8,'ok')
